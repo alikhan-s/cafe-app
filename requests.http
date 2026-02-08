@@ -1,0 +1,191 @@
+### Global Variables
+@baseUrl = http://localhost:5000/api
+@authToken = {{login.response.body.token}}
+@adminToken = {{adminLogin.response.body.token}}
+
+### 1. Register User
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "User",
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### 2. Login User
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### 3. Register Admin (Manually change role in DB after this or use seed)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "Admin",
+  "email": "admin@example.com",
+  "password": "password123",
+  "role": "admin"
+}
+
+### 4. Login Admin
+# @name adminLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password123"
+}
+
+### ---------------- MENU --------------
+
+### 5. Get Menu (Public)
+GET {{baseUrl}}/menu
+
+### 6. Create Menu Item (Admin Only)
+POST {{baseUrl}}/menu
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "Cappuccino",
+  "category": "Coffee",
+  "description": "Rich espresso with steamed milk foam",
+  "price": 4.50,
+  "isAvailable": true
+}
+
+### 7. Update Menu Item (Admin Only)
+# Replace :id with actual ID from previous response
+PUT {{baseUrl}}/menu/6988b848223b65be1ae7f47c
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "price": 5.00
+}
+
+### 8. Delete Menu Item (Admin Only)
+# Replace :id with actual ID
+DELETE {{baseUrl}}/menu/6988b848223b65be1ae7f47c
+Authorization: Bearer {{adminToken}}
+
+### ---------------- RESERVATIONS --------------
+
+### 9. Create Reservation (User)
+POST {{baseUrl}}/reservations
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "date": "2023-12-25T19:00:00.000Z",
+  "tableNumber": 5,
+  "guestCount": 2
+}
+
+### 10. Get My Reservations (User)
+GET {{baseUrl}}/reservations/my
+Authorization: Bearer {{authToken}}
+
+### 11. Get All Reservations (Admin Only)
+GET {{baseUrl}}/reservations
+Authorization: Bearer {{adminToken}}
+
+### 12. Update Reservation Status (Admin Only)
+# Replace :id with actual ID
+PUT {{baseUrl}}/reservations/6988b90a223b65be1ae7f48a
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "confirmed"
+}
+
+### ---------------- USER PROFILE --------------
+
+### 13. Get User Profile (User)
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{authToken}}
+
+### 14. Update User Profile (User)
+# Note: Changing password here will hash it automatically
+PUT {{baseUrl}}/users/profile
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "username": "UpdatedUser",
+  "password": "newpassword123"
+}
+
+### ---------------- ORDERS --------------
+
+### 15. Create Order (User)
+# Replace product ID with actual Menu Item ID
+POST {{baseUrl}}/orders
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "orderItems": [
+    {
+      "name": "Cappuccino",
+      "qty": 2,
+      "image": "image_url",
+      "price": 4.50,
+      "product": "6988bb7cb2c72975b5b054f0"
+    }
+  ],
+  "totalPrice": 9.00
+}
+
+### 16. Get My Orders (User)
+GET {{baseUrl}}/orders/my
+Authorization: Bearer {{authToken}}
+
+### 17. Get All Orders (Admin Only)
+GET {{baseUrl}}/orders
+Authorization: Bearer {{adminToken}}
+
+### 18. Update Order to Delivered (Admin Only)
+# Replace :id with actual Order ID
+PUT {{baseUrl}}/orders/6988bb97b2c72975b5b054f3/deliver
+Authorization: Bearer {{adminToken}}
+
+### ---------------- UPLOAD (Manual Test) --------------
+
+### 19. Upload Image
+# Use Postman or another tool that supports form-data
+# Method: POST
+# URL: {{baseUrl}}/upload
+# Body: form-data
+# Response: /uploads/image-123456789.jpg
+
+### ---------------- VALIDATION & PAGINATION --------------
+
+### 20. Short Password Registration (Should Fail 400)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "ShortPass",
+  "email": "short@example.com",
+  "password": "123"
+}
+
+### 21. Get Menu Page 2 (with PageSize 2)
+GET {{baseUrl}}/menu?page=2&pageSize=2
+
+### 22. Search Menu (Keyword: Coffee)
+GET {{baseUrl}}/menu?keyword=cappuccino
+
+### 23. Get Orders Page 1 (Admin)
+GET {{baseUrl}}/orders?page=1&pageSize=5
+Authorization: Bearer {{adminToken}}
