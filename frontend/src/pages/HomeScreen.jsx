@@ -32,7 +32,7 @@ const HomeScreen = () => {
     };
 
     return (
-        <div>
+        <div className="container mx-auto px-4 py-8">
             <div className="mb-8 flex justify-center">
                 <form onSubmit={handleSearch} className="flex w-full max-w-md">
                     <input

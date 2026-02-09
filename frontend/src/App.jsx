@@ -7,17 +7,21 @@ import Footer from './components/Footer';
 import HomeScreen from './pages/HomeScreen';
 import LoginScreen from './pages/LoginScreen';
 import RegisterScreen from './pages/RegisterScreen';
+import CartScreen from './pages/CartScreen';
+import ProfileScreen from './pages/ProfileScreen';
 
-function App() {
+const App = () => {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-8">
+        <main className="flex-grow bg-gray-50">
           <Routes>
             <Route path="/" element={<HomeScreen />} />
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/register" element={<RegisterScreen />} />
+            <Route path="/cart" element={<CartScreen />} />
+            <Route path="/profile" element={<ProfileScreen />} />
           </Routes>
         </main>
         <Footer />
@@ -25,6 +29,6 @@ function App() {
       </div>
     </Router>
   );
-}
+};
 
 export default App;

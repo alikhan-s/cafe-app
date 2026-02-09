@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Message from '../components/Message';
 
 const RegisterScreen = () => {
-    const [name, setName] = useState('');
+    const [username, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,7 +18,7 @@ const RegisterScreen = () => {
         if (password !== confirmPassword) {
             setMessage('Passwords do not match');
         } else {
-            const success = await register(name, email, password);
+            const success = await register(username, email, password);
             if (success) {
                 navigate('/');
             }
@@ -31,15 +31,15 @@ const RegisterScreen = () => {
             {message && <Message variant="danger">{message}</Message>}
             <form onSubmit={submitHandler}>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                         Name
                     </label>
                     <input
                         type="text"
-                        id="name"
+                        id="username"
                         placeholder="Enter name"
                         className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                        value={name}
+                        value={username}
                         onChange={(e) => setName(e.target.value)}
                     />
                 </div>

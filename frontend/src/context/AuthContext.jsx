@@ -33,9 +33,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (name, email, password) => {
+    const register = async (username, email, password) => {
         try {
-            const { data } = await axios.post('/auth/register', { name, email, password });
+            const { data } = await axios.post('/auth/register', { username, email, password });
             setUserInfo(data);
             localStorage.setItem('userInfo', JSON.stringify(data));
             toast.success('Registration successful!');
