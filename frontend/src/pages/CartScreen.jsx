@@ -140,8 +140,8 @@ const CartScreen = () => {
                                 onClick={checkoutHandler}
                                 disabled={cartItems.length === 0 || loading}
                                 className={`w-full py-3 rounded-md text-white font-bold transition ${loading
-                                        ? 'bg-gray-400 cursor-not-allowed'
-                                        : 'bg-yellow-600 hover:bg-yellow-700'
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-yellow-600 hover:bg-yellow-700'
                                     }`}
                             >
                                 {loading ? 'Processing...' : 'Proceed to Checkout'}

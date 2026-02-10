@@ -12,6 +12,8 @@ import ProfileScreen from './pages/ProfileScreen';
 import AdminRoute from './components/AdminRoute';
 import OrderListScreen from './pages/admin/OrderListScreen';
 import ProductListScreen from './pages/admin/ProductListScreen';
+import ReservationScreen from './pages/ReservationScreen';
+import ReservationListScreen from './pages/admin/ReservationListScreen';
 
 const App = () => {
   return (
@@ -25,11 +27,13 @@ const App = () => {
             <Route path="/register" element={<RegisterScreen />} />
             <Route path="/cart" element={<CartScreen />} />
             <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/reserve" element={<ReservationScreen />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminRoute />}>
               <Route path="orderlist" element={<OrderListScreen />} />
               <Route path="productlist" element={<ProductListScreen />} />
+              <Route path="reservationlist" element={<ReservationListScreen />} />
             </Route>
           </Routes>
         </main>

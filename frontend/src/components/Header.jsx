@@ -33,7 +33,10 @@ const Header = () => {
                 {/* Navigation (Desktop) */}
                 <nav className="hidden md:flex items-center space-x-8">
                     <Link to="/" className="text-gray-600 hover:text-yellow-600 font-medium transition">
-                        Menu
+                        Home
+                    </Link>
+                    <Link to="/reserve" className="text-gray-600 hover:text-yellow-600 font-medium transition">
+                        Book a Table
                     </Link>
                     <Link to="/cart" className="relative text-gray-600 hover:text-yellow-600 transition">
                         <FaShoppingCart size={22} />
@@ -90,6 +93,13 @@ const Header = () => {
                                                 onClick={() => setDropdownOpen(false)}
                                             >
                                                 Orders
+                                            </Link>
+                                            <Link
+                                                to="/admin/reservationlist"
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-600"
+                                                onClick={() => setDropdownOpen(false)}
+                                            >
+                                                Reservations
                                             </Link>
                                         </>
                                     )}

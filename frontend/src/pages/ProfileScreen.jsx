@@ -20,11 +20,19 @@ const ProfileScreen = () => {
     const [loadingOrders, setLoadingOrders] = useState(true);
     const [errorOrders, setErrorOrders] = useState(null);
 
+    // Reservation history state
+    const [reservations, setReservations] = useState([]);
+    const [loadingReservations, setLoadingReservations] = useState(true);
+    const [errorReservations, setErrorReservations] = useState(null);
+
+    const [activeTab, setActiveTab] = useState('orders'); // 'orders' or 'reservations'
+
     useEffect(() => {
         if (userInfo) {
             setUsername(userInfo.username);
             setEmail(userInfo.email);
             fetchMyOrders();
+            fetchMyReservations();
         }
     }, [userInfo]);
 
@@ -37,6 +45,18 @@ const ProfileScreen = () => {
         } catch (err) {
             setErrorOrders(err.response?.data?.message || err.message);
             setLoadingOrders(false);
+        }
+    };
+
+    const fetchMyReservations = async () => {
+        try {
+            setLoadingReservations(true);
+            const { data } = await axios.get('/reservations/my');
+            setReservations(data);
+            setLoadingReservations(false);
+        } catch (err) {
+            setErrorReservations(err.response?.data?.message || err.message);
+            setLoadingReservations(false);
         }
     };
 
@@ -119,71 +139,101 @@ const ProfileScreen = () => {
                     </div>
                 </div>
 
+
                 <div className="md:w-2/3">
-                    <h2 className="text-2xl font-bold mb-4">My Orders</h2>
-                    {loadingOrders ? (
-                        <Loader />
-                    ) : errorOrders ? (
-                        <Message variant="danger">{errorOrders}</Message>
+                    <div className="flex space-x-4 mb-4">
+                        <button
+                            className={`px-4 py-2 font-bold rounded ${activeTab === 'orders' ? 'bg-yellow-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+                            onClick={() => setActiveTab('orders')}
+                        >
+                            My Orders
+                        </button>
+                        <button
+                            className={`px-4 py-2 font-bold rounded ${activeTab === 'reservations' ? 'bg-yellow-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+                            onClick={() => setActiveTab('reservations')}
+                        >
+                            My Reservations
+                        </button>
+                    </div>
+
+                    {activeTab === 'orders' ? (
+                        <>
+                            {loadingOrders ? (
+                                <Loader />
+                            ) : errorOrders ? (
+                                <Message variant="danger">{errorOrders}</Message>
+                            ) : (
+                                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full leading-normal">
+                                            <thead>
+                                                <tr>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">DATE</th>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">TOTAL</th>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">PAID</th>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">DELIVERED</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {orders.map((order) => (
+                                                    <tr key={order._id}>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{order._id.substring(0, 10)}...</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{order.createdAt.substring(0, 10)}</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">${order.totalPrice}</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                                            {order.isPaid ? <span className="text-green-600 font-bold">{order.paidAt.substring(0, 10)}</span> : <span className="text-red-600 font-bold">No</span>}
+                                                        </td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                                            {order.isDelivered ? <span className="text-green-600 font-bold">{order.deliveredAt.substring(0, 10)}</span> : <span className="text-red-600 font-bold">No</span>}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+                        </>
                     ) : (
-                        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full leading-normal">
-                                    <thead>
-                                        <tr>
-                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                ID
-                                            </th>
-                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                DATE
-                                            </th>
-                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                TOTAL
-                                            </th>
-                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                PAID
-                                            </th>
-                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                DELIVERED
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {orders.map((order) => (
-                                            <tr key={order._id}>
-                                                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                    {order._id.substring(0, 10)}...
-                                                </td>
-                                                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                    {order.createdAt.substring(0, 10)}
-                                                </td>
-                                                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                    ${order.totalPrice}
-                                                </td>
-                                                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                    {order.isPaid ? (
-                                                        <span className="text-green-600 font-bold">
-                                                            {order.paidAt.substring(0, 10)}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-red-600 font-bold">No</span>
-                                                    )}
-                                                </td>
-                                                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                    {order.isDelivered ? (
-                                                        <span className="text-green-600 font-bold">
-                                                            {order.deliveredAt.substring(0, 10)}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-red-600 font-bold">No</span>
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <>
+                            {loadingReservations ? (
+                                <Loader />
+                            ) : errorReservations ? (
+                                <Message variant="danger">{errorReservations}</Message>
+                            ) : (
+                                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full leading-normal">
+                                            <thead>
+                                                <tr>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">DATE & TIME</th>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">GUESTS</th>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">TABLE</th>
+                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">STATUS</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {reservations.map((res) => (
+                                                    <tr key={res._id}>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                                            {new Date(res.date).toLocaleString()}
+                                                        </td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{res.guestCount}</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{res.tableNumber || 'Any'}</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${res.status === 'Confirmed' ? 'bg-green-100 text-green-800' : res.status === 'Cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                                                {res.status}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
