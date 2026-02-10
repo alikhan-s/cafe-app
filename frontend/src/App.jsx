@@ -9,6 +9,9 @@ import LoginScreen from './pages/LoginScreen';
 import RegisterScreen from './pages/RegisterScreen';
 import CartScreen from './pages/CartScreen';
 import ProfileScreen from './pages/ProfileScreen';
+import AdminRoute from './components/AdminRoute';
+import OrderListScreen from './pages/admin/OrderListScreen';
+import ProductListScreen from './pages/admin/ProductListScreen';
 
 const App = () => {
   return (
@@ -22,6 +25,12 @@ const App = () => {
             <Route path="/register" element={<RegisterScreen />} />
             <Route path="/cart" element={<CartScreen />} />
             <Route path="/profile" element={<ProfileScreen />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminRoute />}>
+              <Route path="orderlist" element={<OrderListScreen />} />
+              <Route path="productlist" element={<ProductListScreen />} />
+            </Route>
           </Routes>
         </main>
         <Footer />

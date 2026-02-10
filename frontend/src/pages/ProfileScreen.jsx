@@ -6,12 +6,14 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 
 const ProfileScreen = () => {
-    const { userInfo } = useAuth();
+    const { userInfo, updateUser } = useAuth();
 
-    // Local state for profile form (if we were implementing update logic)
-    // For now, just display info
+    // Profile state
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [loadingUpdate, setLoadingUpdate] = useState(false);
 
     // Order history state
     const [orders, setOrders] = useState([]);
@@ -38,35 +40,82 @@ const ProfileScreen = () => {
         }
     };
 
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match');
+            return;
+        }
+
+        try {
+            setLoadingUpdate(true);
+            const { data } = await axios.put('/users/profile', {
+                username,
+                email,
+                password,
+            });
+            setLoadingUpdate(false);
+            updateUser(data);
+            toast.success('Profile Updated Successfully');
+        } catch (err) {
+            setLoadingUpdate(false);
+            toast.error(err.response?.data?.message || err.message);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row gap-8">
                 <div className="md:w-1/3">
                     <h2 className="text-2xl font-bold mb-4">User Profile</h2>
                     <div className="bg-white shadow-md rounded-lg p-6">
-                        <div className="mb-4">
-                            <label className="block text-gray-700 font-bold mb-2">Name</label>
-                            <input
-                                type="text"
-                                value={username}
-                                disabled
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 font-bold mb-2">Email Address</label>
-                            <input
-                                type="email"
-                                value={email}
-                                disabled
-                                className="w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-md cursor-not-allowed"
-                            />
-                        </div>
-                        {/* 
-                        <button className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition">
-                            Update Profile
-                        </button> 
-                        */}
+                        <form onSubmit={submitHandler}>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 font-bold mb-2">Name</label>
+                                <input
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 font-bold mb-2">Email Address</label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    disabled
+                                    className="w-full px-3 py-2 border border-gray-300 bg-gray-100 rounded-md cursor-not-allowed"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 font-bold mb-2">Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter new password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                />
+                            </div>
+                            <div className="mb-6">
+                                <label className="block text-gray-700 font-bold mb-2">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Confirm new password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition flex justify-center items-center"
+                                disabled={loadingUpdate}
+                            >
+                                {loadingUpdate ? 'Updating...' : 'Update Profile'}
+                            </button>
+                        </form>
                     </div>
                 </div>
 

@@ -78,11 +78,18 @@ const Header = () => {
                                         <>
                                             <div className="border-t border-gray-100 my-1"></div>
                                             <Link
-                                                to="/admin/dashboard"
-                                                className="block px-4 py-2 text-sm text-red-600 font-semibold hover:bg-red-50"
+                                                to="/admin/productlist"
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-600"
                                                 onClick={() => setDropdownOpen(false)}
                                             >
-                                                Admin Panel
+                                                Products
+                                            </Link>
+                                            <Link
+                                                to="/admin/orderlist"
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-600"
+                                                onClick={() => setDropdownOpen(false)}
+                                            >
+                                                Orders
                                             </Link>
                                         </>
                                     )}

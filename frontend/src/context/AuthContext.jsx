@@ -52,12 +52,18 @@ export const AuthProvider = ({ children }) => {
         toast.info('Logged out successfully');
     };
 
+    const updateUser = (userData) => {
+        setUserInfo(userData);
+        localStorage.setItem('userInfo', JSON.stringify(userData));
+    };
+
     const value = {
         userInfo,
         loading,
         login,
         register,
-        logout
+        logout,
+        updateUser
     };
 
     return (
